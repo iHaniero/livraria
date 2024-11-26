@@ -1,4 +1,4 @@
-from rest_framework.serializers import CharField, ModelSerializer, SerializerMethodField
+from rest_framework.serializers import CharField, ModelSerializer, SerializerMethodField, CurrentUserDefault, HiddenField
 
 from core.models import Compra, ItensCompra
 
@@ -32,6 +32,7 @@ class CompraSerializer(ModelSerializer):
 
 
 class CompraCreateUpdateSerializer(ModelSerializer):
+    usuario = HiddenField(default=CurrentUserDefault())
     itens = ItensCompraCreateUpdateSerializer(many=True)  # Aqui mudou
 
     class Meta:
@@ -45,3 +46,21 @@ class CompraCreateUpdateSerializer(ModelSerializer):
             for item_data in itens_data:
                 ItensCompra.objects.create(compra=compra, **item_data)
         return super().update(compra, validated_data)
+
+
+class ItensCompraListSerializer(ModelSerializer):
+    livro = CharField(source="livro.titulo", read_only=True)
+
+    class Meta:
+        model = ItensCompra
+        fields = ("quantidade", "livro")
+        depth = 1
+
+
+class CompraListSerializer(ModelSerializer):
+    usuario = CharField(source="usuario.email", read_only=True)
+    itens = ItensCompraListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Compra
+        fields = ("id", "usuario", "itens")
