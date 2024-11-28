@@ -3,6 +3,7 @@ from .categoria import CategoriaSerializer
 from .editora import EditoraSerializer
 from .autor import AutorSerializer
 from .livro import (
+    LivroAjustarEstoqueSerializer,
     LivroAlterarPrecoSerializer,
     LivroListSerializer,
     LivroRetrieveSerializer,
