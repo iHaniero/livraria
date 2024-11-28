@@ -25,10 +25,9 @@ class Compra(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     tipo_pagamento = models.IntegerField(choices=TipoPagamento.choices, default=TipoPagamento.CARTAO_CREDITO)
 
-
-@property
-def total(self):
-    return sum(item.preco * item.quantidade for item in self.itens.all())
+    @property
+    def total(self):
+        return sum(item.preco * item.quantidade for item in self.itens.all())
 
 
 class ItensCompra(models.Model):
