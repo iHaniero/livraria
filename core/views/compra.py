@@ -8,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 
 from core.models import Compra
 from core.serializers import CompraCreateUpdateSerializer, CompraListSerializer, CompraSerializer
@@ -17,8 +18,9 @@ class CompraViewSet(ModelViewSet):
     queryset = Compra.objects.all()
     serializer_class = CompraSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["usuario__nome", "status"]
+    search_fields = ["data"]
 
     def get_queryset(self):
         usuario = self.request.user
