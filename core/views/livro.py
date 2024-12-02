@@ -1,3 +1,5 @@
+from django.db.models.aggregates import Sum
+
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -10,7 +12,7 @@ from core.serializers import (
     LivroListSerializer,
     LivroRetrieveSerializer,
     LivroSerializer,
-    LivroAjustarEstoqueSerializer
+    LivroAjustarEstoqueSerializer,
 )
 
 
@@ -54,3 +56,29 @@ class LivroViewSet(ModelViewSet):
         return Response(
             {"status": "Quantidade ajustada com sucesso", "novo_estoque": livro.quantidade}, status=status.HTTP_200_OK
         )
+
+    @action(detail=False, methods=["get"])
+    def mais_vendidos(self, request):
+        # Otimizando a consulta com select_related, caso haja relação ForeignKey
+        livros = (
+            Livro.objects.annotate(total_vendidos=Sum("itens_compra__quantidade"))
+            .filter(total_vendidos__gt=10)
+            .order_by("-total_vendidos")
+        )  # Ordena pelo total vendido em ordem decrescente
+
+        # Verificando se há livros e formatando os dados
+        if livros.exists():
+            data = [
+                {
+                    "id": livro.id,
+                    "titulo": livro.titulo,
+                    "total_vendidos": livro.total_vendidos,
+                }
+                for livro in livros
+            ]
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"detail": "Nenhum livro encontrado com mais de 10 vendas."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
