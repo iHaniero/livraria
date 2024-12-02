@@ -13,3 +13,5 @@ class AutorViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["nome", "email"]
     search_fields = ["nome"]
+    ordering_fields = ["nome", "email"]
+    ordering = ["nome"]
