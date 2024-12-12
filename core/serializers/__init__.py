@@ -17,3 +17,4 @@ from .compra import (
     ItensCompraListSerializer,
     ItensCompraSerializer,
 )
+from .classificacao import ClassificacaoSerializer

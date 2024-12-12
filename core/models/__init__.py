@@ -4,3 +4,4 @@ from .editora import Editora
 from .autor import Autor
 from .livro import Livro
 from .compra import Compra, ItensCompra
+from .classificacao import Classificacao

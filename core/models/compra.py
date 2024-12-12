@@ -27,8 +27,8 @@ class Compra(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.total = sum(item.preco * item.quantidade for item in self.itens.all())
+        if self.pk:
+            self.total = sum(item.preco * item.quantidade for item in self.itens.all())
         super().save(*args, **kwargs)
 
 class ItensCompra(models.Model):
